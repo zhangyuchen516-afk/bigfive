@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大五人格光谱测验 · 40题全面向版</title>
+<style>
+:root{
+  --paper:#F7F7F4; --card:#FFFFFF; --ink:#181B20; --sub:#5C6370; --faint:#9AA1AC;
+  --line:#E3E4DF; --steel:#2E5EAA; --steel-soft:#DCE6F5; --signal:#B4552D; --signal-soft:#F5E4DB;
+  --mid:#C9CCC5; --ok:#2E7D4F;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:-apple-system,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.serif{font-family:"Songti SC","Noto Serif SC",Georgia,serif}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px 80px}
+header{padding:48px 0 28px;border-bottom:2px solid var(--ink)}
+.eyebrow{font-size:12px;letter-spacing:.25em;color:var(--sub);margin-bottom:12px}
+h1{font-size:28px;line-height:1.3;font-weight:600}
+.intro{margin:20px 0 0;font-size:14px;color:var(--sub)}
+.intro b{color:var(--ink)}
+.notice{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:24px 0;font-size:14px}
+.notice b{color:var(--signal)}
+.qitem{padding:16px 0;border-bottom:0.5px solid var(--line)}
+.qtext{font-size:15px;margin-bottom:10px;line-height:1.6}
+.qnum{color:var(--faint);font-variant-numeric:tabular-nums}
+.opts{display:flex;gap:6px}
+.opts button{flex:1;height:42px;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:8px;color:var(--ink);cursor:pointer;transition:all .12s}
+.opts button.on{background:var(--steel);border-color:var(--steel);color:#fff;font-weight:600}
+.anchors{display:flex;justify-content:space-between;font-size:11px;color:var(--faint);margin-top:5px}
+.qitem.miss{background:var(--signal-soft);margin:0 -12px;padding-left:12px;padding-right:12px;border-radius:8px}
+.bar{position:sticky;top:0;background:var(--paper);padding:12px 0;z-index:10;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);font-size:13px;color:var(--sub)}
+#prog{font-weight:600;color:var(--ink);font-variant-numeric:tabular-nums}
+.submit{width:100%;margin-top:24px;height:52px;font-size:16px;font-weight:600;background:var(--ink);color:#fff;border:none;border-radius:10px;cursor:pointer}
+#errmsg{font-size:13px;color:var(--signal);display:none;margin:10px 0;text-align:center}
+
+/* results */
+#result{display:none}
+.secnum{font-size:12px;letter-spacing:.2em;color:var(--steel);font-weight:600;margin:40px 0 4px}
+h2{font-size:21px;font-weight:600;margin-bottom:16px}
+.gauge{margin:26px 0 30px}
+.ghead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.gname{font-weight:600;font-size:15px}
+.gname span{color:var(--faint);font-weight:400;font-size:12px;margin-left:6px}
+.gval{font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.track{position:relative;height:13px;background:var(--card);border:1px solid var(--line);border-radius:7px}
+.midline{position:absolute;left:50%;top:-4px;bottom:-4px;width:1px;background:var(--mid)}
+.pt{position:absolute;top:50%;width:15px;height:15px;background:var(--steel);border:3px solid var(--card);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.scale{display:flex;justify-content:space-between;font-size:10px;color:var(--faint);margin-top:5px}
+.facets{margin-top:10px;padding-left:12px;border-left:2px solid var(--line)}
+.facet{display:flex;align-items:center;gap:8px;margin:6px 0}
+.fname{font-size:12px;color:var(--sub);width:96px;flex-shrink:0}
+.ftrack{position:relative;flex:1;height:6px;background:var(--card);border:1px solid var(--line);border-radius:3px}
+.ffill{position:absolute;top:0;bottom:0;left:0;background:var(--steel);border-radius:3px;opacity:.55}
+.split .ffill{background:var(--signal)}
+.fval{font-size:12px;font-weight:600;width:28px;text-align:right;font-variant-numeric:tabular-nums}
+.gnote{font-size:13px;color:var(--sub);margin-top:8px}
+.splitflag{display:inline-block;font-size:11px;padding:1px 8px;border-radius:99px;background:var(--signal-soft);color:var(--signal);font-weight:600;margin-left:6px;vertical-align:1px}
+.claude-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin:30px 0}
+.claude-box h3{font-size:16px;font-weight:600;margin-bottom:8px}
+.claude-box p{font-size:13px;color:var(--sub);margin-bottom:14px}
+.copybtn{width:100%;height:48px;font-size:15px;font-weight:600;background:var(--steel);color:#fff;border:none;border-radius:9px;cursor:pointer}
+.copybtn.done{background:var(--ok)}
+#ptext{display:none;margin-top:12px;width:100%;height:120px;font-size:12px;padding:10px;border:1px solid var(--line);border-radius:8px;color:var(--sub)}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--faint);line-height:1.8}
+.qualintro{font-size:13px;color:var(--sub);margin:8px 0 18px}
+.qbox{margin-bottom:16px}
+.qbox label{display:block;font-size:14px;margin-bottom:6px;line-height:1.5}
+.qbox textarea{width:100%;padding:10px 12px;font-size:14px;font-family:inherit;line-height:1.6;background:var(--card);border:1px solid var(--line);border-radius:8px;color:var(--ink);resize:vertical}
+.qbox textarea:focus{outline:none;border-color:var(--steel)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div id="jswarn" style="background:var(--signal-soft);border:1px solid var(--signal);border-radius:10px;padding:14px 16px;margin:20px 0 0;font-size:14px;line-height:1.6">⚠️ 如果你看到这条提示且下方<b>没有出现题目</b>，说明当前打开方式禁用了脚本（常见于微信内置预览）。请点右上角 <b>···</b> 选择<b>"在浏览器中打开"</b>（iOS 选"用其他应用打开"→ Safari）。</div>
+
+<div id="test">
+<header>
+  <div class="eyebrow">BIG FIVE SPECTRUM TEST</div>
+  <h1 class="serif">大五人格光谱测验</h1>
+  <p class="intro">40 题量表 + 5 题选答 · 全面向版 · 约 8–12 分钟<br>产出 <b>5 个维度光谱值 + 10 个面向值</b>，并可一键交给你的 Claude 做深度解读与行为交叉验证。</p>
+</header>
+
+<div class="notice">
+  作答须知：按<b>第一反应</b>作答，按你<b>实际怎么做</b>而不是"应该怎么做"；反向题照字面直接答，计分会自动处理。1 = 非常不符合，5 = 非常符合。<br>
+  <span style="color:var(--sub);font-size:13px">测验含自动作答质量检测。结果页有一个自愿的"一键回传"按钮，仅发送昵称与分数，不含你的文字回答。</span>
+</div>
+
+<div class="qbox" style="margin:20px 0 4px"><label>你的昵称（用于结果汇总，可用化名）</label><textarea id="nick" rows="1" placeholder="例如：章鱼"></textarea></div>
+<div class="qbox" style="margin:14px 0 4px"><label>你的 MBTI（选填，仅作参考）</label><textarea id="mbti" rows="1" placeholder="例如 INTJ，不知道可跳过"></textarea>
+<p style="font-size:12px;color:var(--sub);margin-top:6px;line-height:1.6">说明：大五是学术心理学的标准人格模型（连续光谱、可重复验证），MBTI 是类型学（二分标签、重测稳定性较低），两者维度大致对应（E/I↔外向性、N/S↔开放性、T/F↔宜人性、J/P↔尽责性）。这里 MBTI 只作参考——测完后大五分数反而可以帮你校准 MBTI 里拿不准的字母。</p></div>
+
+<div class="bar"><span>1 非常不符合 · 5 非常符合</span><span id="prog">0/40</span></div>
+<div id="items"></div>
+
+<div class="qual">
+  <div class="secnum" style="margin-top:36px">补充 / 行为采样（选答 · 不计分）</div>
+  <p class="qualintro">这 5 题不参与计分，但会附给你的 Claude 做<b>交叉验证</b>——把你的自评分数和真实行为比对，不一致的地方它会指出来。写具体发生过的事，一两句即可；跳过也可以。</p>
+  <div class="qbox"><label>0. 你的职业 / 当前生活重心是什么？</label><textarea id="qa0" rows="2" placeholder="一句话即可"></textarea></div>
+  <div class="qbox"><label>1. 过去两周，有没有一件事让你投入到忘记时间？是什么？</label><textarea id="qa1" rows="2" placeholder="写具体的事，不是\u201c我是个专注的人\u201d"></textarea></div>
+  <div class="qbox"><label>2. 最近一次和别人意见冲突，你当时实际说了 / 做了什么？</label><textarea id="qa2" rows="2" placeholder="写当时的原话或动作"></textarea></div>
+  <div class="qbox"><label>3. 描述你最近一个普通工作日是怎么展开的（有无计划、按不按计划走）。</label><textarea id="qa3" rows="2" placeholder="写实际过程，不是理想状态"></textarea></div>
+  <div class="qbox"><label>4. 最近一次让你情绪明显波动的事是什么？波动持续了多久？</label><textarea id="qa4" rows="2" placeholder="事件 + 大致恢复时间"></textarea></div>
+</div>
+
+<p id="errmsg">还有量表题未作答，已标红并滚动到第一题</p>
+<button class="submit" id="go">提交，查看我的光谱</button>
+</div>
+
+<div id="result">
+<header>
+  <div class="eyebrow">YOUR SPECTRUM</div>
+  <h1 class="serif">你的大五光谱</h1>
+  <p class="intro">深色圆点为你的分值，中央竖线为人群中位（50）。橙色面向条表示该维度内部存在 ≥20 分的显著分裂——这类结构性信息是普通测验给不了的。</p>
+</header>
+<div class="secnum">01 / 光谱值</div>
+<h2>五维与十面向</h2>
+<div id="qcstrip" style="font-size:13px;color:var(--sub);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:8px"></div>
+<div id="gauges"></div>
+
+<div class="secnum">02 / 基线结论</div>
+<h2>快速解读</h2>
+<div id="conclusions"></div>
+
+<div class="claude-box">
+  <h3>让 AI 做深度解读（Claude / ChatGPT 等均可）→</h3>
+  <p>下面按钮会复制一段包含你全部分数的解读指令。打开你常用的 AI，直接粘贴发送，就能得到：面向分裂分析、特质交互效应、优势与风险敞口、MBTI 校准、以及针对你处境的具体建议。</p>
+  <button class="copybtn" id="copy">复制结果 + 解读指令</button>
+  <textarea id="ptext" readonly></textarea>
+</div>
+
+<div class="claude-box">
+  <h3>回传结果给 Yuchen（自愿）</h3>
+  <p>你的朋友 Yuchen 正在做一个小型社会研究：分析人与人之间关系的链接。点击下方按钮会把你的测验数据发送给 TA，用于这项汇总分析。</p>
+  <button class="copybtn" id="send">同意并一键回传</button>
+  <p id="sendfail" style="display:none;font-size:13px;color:var(--signal);margin:10px 0 0">自动回传没有成功（可能是网络原因）——请点下方按钮复制结果，微信粘贴发给 TA。</p>
+  <button class="copybtn" id="copy2" style="display:none;margin-top:10px">复制汇总用结果</button>
+  <textarea id="ptext2" readonly style="display:none;margin-top:12px;width:100%;height:80px;font-size:12px;padding:10px;border:1px solid var(--line);border-radius:8px;color:var(--sub)"></textarea>
+</div>
+
+<footer>
+  计分方式：每面向 4 题（含反向计分），面向分 = (原始分−4)/16×100；维度分 = 两面向均值。短量表单面向信度有限，±8 以内的差异请视为噪声。"情绪敏感性"即学术文献中的神经质 / 负性情绪性（Neuroticism）维度，此处采用中性表述。MBTI 仅作参考录入，本测验以大五连续光谱为准。本测验用于自我理解，不构成临床或人事评估依据。面向框架参考 DeYoung et al., Big Five Aspect Scales。 v7
+</footer>
+</div>
+
+</div>
+<script>
+document.getElementById('jswarn').style.display='none';
+// [aspect, text, reverse] — aspects: IT智识 AE审美 IN勤奋 OR秩序 EN热情 AS果敢 CO同情 PO礼貌 WI退缩 VO易变
+const Q=[
+["IT","我喜欢钻研复杂的抽象问题",0],
+["EN","我和别人在一起时容易感到兴奋和快乐",0],
+["IN","我定下目标后会持续投入直到完成",0],
+["CO","我能敏锐察觉他人的情绪变化",0],
+["WI","我容易感到焦虑或担忧",0],
+["AE","我会被艺术、音乐或自然之美深深打动",0],
+["AS","我在群体中会自然承担主导角色",0],
+["OR","我的物品和文件都有固定的存放位置",0],
+["PO","我说话注意分寸，不让别人下不来台",0],
+["VO","我容易被激怒",0],
+["IT","哲学类的讨论让我觉得无聊",1],
+["EN","我很容易结交新朋友",0],
+["IN","我对自己的产出标准要求很高",0],
+["CO","我愿意花时间安慰情绪低落的人",0],
+["WI","我会反复思虑负面的事情",0],
+["AE","我有丰富的想象力",0],
+["AS","我善于说服和影响别人",0],
+["OR","我做事之前会制定详细的计划",0],
+["PO","我不好意思打断或纠正别人",0],
+["VO","我的情绪起伏比较大",0],
+["IT","我能很快理解新的概念",0],
+["EN","我在人群中通常保持安静",1],
+["IN","遇到困难时我倾向于先放一放",1],
+["CO","我通常不会主动过问别人遇到的麻烦",1],
+["WI","我很少感到沮丧或低落",1],
+["AE","我对美的事物不太敏感",1],
+["AS","我通常等别人来牵头",1],
+["OR","我的桌面或电脑文件经常处于杂乱状态",1],
+["PO","我会直接指出别人的错误，即使让对方难堪",1],
+["VO","我在压力下也能保持平静",1],
+["IT","我避免阅读需要深度思考的内容",1],
+["EN","我倾向于和陌生人保持距离",1],
+["IN","我有很多开了头但没做完的事情",1],
+["CO","我对别人的抱怨感到不耐烦",1],
+["WI","我对自己的未来通常感到安心",1],
+["AE","我很少留意周围环境的美感",1],
+["AS","在众人面前表达观点让我不自在",1],
+["OR","我觉得制定详细计划是浪费时间",1],
+["PO","为了达成目标，我会向别人施压",1],
+["VO","我很难被惹恼",1]
+];
+const META={
+O:{name:"开放性",en:"Openness",f:[["IT","智识好奇"],["AE","审美想象"]]},
+C:{name:"尽责性",en:"Conscientiousness",f:[["IN","勤奋性"],["OR","秩序性"]]},
+E:{name:"外向性",en:"Extraversion",f:[["EN","热情"],["AS","果敢"]]},
+A:{name:"宜人性",en:"Agreeableness",f:[["CO","同情心"],["PO","礼貌性"]]},
+N:{name:"情绪敏感性",en:"Sensitivity",f:[["WI","退缩焦虑"],["VO","情绪易变"]]}
+};
+const TXT={
+O:{h:"智识与审美的双引擎都在高位：你被抽象问题和新经验驱动，是天然的探索者。",m:"选择性开放：对部分领域好奇，对其余保持实用主义，兼顾探索与稳定。",l:"务实取向：偏好具体、熟悉、被验证过的事物，执行确定性任务时是优势。"},
+C:{h:"高目标投入与高标准：你是靠得住的推进者，注意为自己保留恢复窗口。",m:"张弛有度：能自律但不苛求，灵活性是你的隐性资产。",l:"即兴风格：靠灵感与状态驱动，适合弹性环境，deadline 密集的环境会消耗你。"},
+E:{h:"社交为你供能：表达、连接、影响他人是你的自然模式。",m:"两栖型：能社交也能独处，按场合切换，这是适应面最广的区间。",l:"内倾取向：独处是你的充电方式，深度一对一优于大场面。"},
+A:{h:"高信任与高体谅：你是团队的黏合剂，注意别让自己的需求总排在最后。",m:"有条件的善意：合作但有底线，值得信任但不盲从。",l:"直接与独立：不回避冲突、重目标轻客套；高保真沟通是资产，但注意关键关系中的\u201c压迫感税\u201d。"},
+N:{h:"情绪敏感度高：你对风险和问题的觉察比常人早，代价是内耗；把敏感当雷达用而非警报。",m:"正常波动区间：有压力反应但可恢复，属于健康韧性带。",l:"低损耗引擎：情绪稳定、抗压强；注意你可能低估他人的压力感受。"}
+};
+const box=document.getElementById('items');
+Q.forEach((q,i)=>{
+  const d=document.createElement('div');
+  d.className='qitem';d.id='q'+i;
+  let b='';for(let v=1;v<=5;v++)b+='<button data-q="'+i+'" data-v="'+v+'">'+v+'</button>';
+  d.innerHTML='<p class="qtext"><span class="qnum">'+(i+1)+'.</span> '+q[1]+'</p><div class="opts">'+b+'</div>';
+  box.appendChild(d);
+});
+const ans={};
+const T0=Date.now();
+box.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;
+  ans[b.dataset.q]=+b.dataset.v;
+  b.parentElement.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  document.getElementById('q'+b.dataset.q).classList.remove('miss');
+  document.getElementById('prog').textContent=Object.keys(ans).length+'/40';
+  document.getElementById('errmsg').style.display='none';
+});
+function pct(raw){return Math.round((raw-4)/16*100)}
+document.getElementById('go').addEventListener('click',()=>{
+  const miss=[];Q.forEach((q,i)=>{if(!ans[i])miss.push(i)});
+  if(miss.length){miss.forEach(i=>document.getElementById('q'+i).classList.add('miss'));
+    document.getElementById('errmsg').style.display='block';
+    document.getElementById('q'+miss[0]).scrollIntoView({behavior:'smooth',block:'center'});return}
+  const fs={};Q.forEach((q,i)=>{fs[q[0]]=(fs[q[0]]||0)+(q[2]?6-ans[i]:ans[i])});
+  const F={};for(const k in fs)F[k]=pct(fs[k]);
+  const D={};for(const d in META)D[d]=Math.round((F[META[d].f[0][0]]+F[META[d].f[1][0]])/2);
+  const QA_LABELS=['职业/当前生活重心','投入到忘时的事(近两周)','最近一次意见冲突的实际言行','最近一个普通工作日的实际展开','最近一次情绪波动及恢复时长'];
+  const qa=[];for(let i=0;i<5;i++){const v=(document.getElementById('qa'+i).value||'').trim();if(v)qa.push(QA_LABELS[i]+'：'+v)}
+  // QC: elapsed minutes, longest identical-answer run, straight-vs-reverse contradiction index
+  const mins=Math.round((Date.now()-T0)/6000)/10;
+  let run=1,maxrun=1;for(let i=1;i<40;i++){run=(ans[i]===ans[i-1])?run+1:1;if(run>maxrun)maxrun=run}
+  const sr={};Q.forEach((q,i)=>{const k=q[0];sr[k]=sr[k]||{s:0,r:0};if(q[2])sr[k].r+=ans[i];else sr[k].s+=ans[i]});
+  let cid=0;for(const k in sr)cid+=Math.abs((sr[k].s/2)+(sr[k].r/2)-6);cid=Math.round(cid/10*100)/100;
+  const flags=[];if(mins<2.5)flags.push('用时过短');if(maxrun>=10)flags.push('同值连击'+maxrun);if(cid>1.2)flags.push('正反题矛盾偏高');
+  const qc={mins:mins,maxrun:maxrun,cid:cid,flags:flags};
+  const nick=(document.getElementById('nick').value||'').trim()||'未署名';
+  const mbti=(document.getElementById('mbti').value||'').trim().toUpperCase();
+  render(D,F,qa,qc,nick,mbti);
+  document.getElementById('test').style.display='none';
+  document.getElementById('result').style.display='block';
+  window.scrollTo(0,0);
+});
+function render(D,F,qa,qc,nick,mbti){
+  let g='';
+  for(const d in META){
+    const m=META[d],f1=m.f[0],f2=m.f[1];
+    const split=Math.abs(F[f1[0]]-F[f2[0]])>=20;
+    g+='<div class="gauge"><div class="ghead"><div class="gname">'+m.name+'<span>'+m.en+'</span>'+(split?'<span class="splitflag">面向分裂</span>':'')+'</div><div class="gval">'+D[d]+'</div></div>'
+    +'<div class="track"><div class="midline"></div><div class="pt" style="left:'+D[d]+'%"></div></div>'
+    +'<div class="scale"><span>0</span><span>50</span><span>100</span></div>'
+    +'<div class="facets'+(split?' split':'')+'">'
+    +'<div class="facet"><div class="fname">'+f1[1]+'</div><div class="ftrack"><div class="ffill" style="width:'+F[f1[0]]+'%"></div></div><div class="fval">'+F[f1[0]]+'</div></div>'
+    +'<div class="facet"><div class="fname">'+f2[1]+'</div><div class="ftrack"><div class="ffill" style="width:'+F[f2[0]]+'%"></div></div><div class="fval">'+F[f2[0]]+'</div></div>'
+    +'</div></div>';
+  }
+  document.getElementById('gauges').innerHTML=g;
+  let c='';
+  for(const d in META){
+    const t=D[d]>=65?TXT[d].h:(D[d]>=35?TXT[d].m:TXT[d].l);
+    const m=META[d],diff=Math.abs(F[m.f[0][0]]-F[m.f[1][0]]);
+    c+='<p style="margin-bottom:12px"><b>'+m.name+' '+D[d]+'</b> — '+t
+    +(diff>=20?' <span style="color:var(--signal)">注意：该维度内部'+m.f[0][1]+'('+F[m.f[0][0]]+')与'+m.f[1][1]+'('+F[m.f[1][0]]+')分裂达 '+diff+' 分，单看维度分会失真，建议交给 Claude 做面向级解读。</span>':'')+'</p>';
+  }
+  document.getElementById('conclusions').innerHTML=c;
+  const prompt='我刚完成一份40题的大五人格全面向测验（BFAS结构：每维度2面向×4题，含反向计分，面向分=(原始分-4)/16×100，维度分=两面向均值）。我的结果：\n\n'
+  +'开放性 O '+D.O+'（智识好奇 '+F.IT+' / 审美想象 '+F.AE+'）\n'
+  +'尽责性 C '+D.C+'（勤奋性 '+F.IN+' / 秩序性 '+F.OR+'）\n'
+  +'外向性 E '+D.E+'（热情 '+F.EN+' / 果敢 '+F.AS+'）\n'
+  +'宜人性 A '+D.A+'（同情心 '+F.CO+' / 礼貌性 '+F.PO+'）\n'
+  +'情绪敏感性 N '+D.N+'（退缩焦虑 '+F.WI+' / 情绪易变 '+F.VO+'）——即学术上的神经质/负性情绪性维度\n'
+  +(mbti?'\n我自报的 MBTI 参考：'+mbti+'\n':'')
+  +(qa&&qa.length?'\n我还回答了几道开放式行为采样题（真实发生的事，非自我评价）：\n'+qa.map(x=>'- '+x).join('\n')+'\n':'')
+  +'\n请给我一份深度解读，要求：\n'
+  +'1. 逐维度解读，凡面向差≥20分的维度必须做面向级分析（说明分裂结构的行为含义）；\n'
+  +(qa&&qa.length?'2. 交叉验证：把我的行为采样与量表分数比对，凡自评与行为不一致之处必须明确指出，并下调该维度的置信度、说明你更相信哪个证据及原因；\n':'2. （我未填写行为采样题，请在解读前先让我用具体事例描述1-2个近期真实行为，再开始分析，以避免只基于自我概念下结论；）\n')
+  +'3. 分析2-3个最重要的特质交互效应（组合而非单维度）；\n'
+  +'4. 给出我的核心优势资产和风险敞口各2-3条；\n'
+  +(mbti?'5. MBTI校准：用大五分数对照我的MBTI（E/I↔外向性、N/S↔开放性、T/F↔宜人性、J/P↔尽责性），指出哪些字母与量表一致、哪些可能需要修正，以大五为准；\n':'')
+  +(mbti?'6':'5')+'. 结合我的职业和生活处境给具体建议'+(qa&&qa.length&&qa[0].indexOf('职业')===0?'（背景已在上方行为采样中）':'（可以先问我1-2个关键背景问题）')+'；\n'
+  +(mbti?'7':'6')+'. 保持校准：短量表单面向仅4题、信度有限，±8以内差异视为噪声，不要过度解读；主要结论请标注你的置信度。';
+  const ta=document.getElementById('ptext');ta.value=prompt;
+  document.getElementById('copy').addEventListener('click',function(){
+    const btn=this;
+    const done=()=>{btn.textContent='已复制 — 去粘贴给你的 AI';btn.classList.add('done')};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(prompt).then(done).catch(()=>{ta.style.display='block';ta.select();done()});
+    }else{ta.style.display='block';ta.select();try{document.execCommand('copy');done()}catch(e){}}
+  });
+  // QC strip + send-back string
+  const qcok=qc.flags.length===0;
+  document.getElementById('qcstrip').innerHTML='作答质量：'+(qcok?'<b style="color:var(--ok)">正常</b>':'<b style="color:var(--signal)">'+qc.flags.join('、')+'</b>')
+    +' <span style="color:var(--faint)">（用时 '+qc.mins+' 分 · 最长同值连击 '+qc.maxrun+' · 正反一致性偏差 '+qc.cid+'）</span>'
+    +(qcok?'':'<br><span style="font-size:12px">检测到可疑作答模式，结果可能失真——建议认真重做一遍。</span>');
+  const back='【大五结果回传】'+nick+(mbti?'('+mbti+')':'')
+  +' | O'+D.O+'(智'+F.IT+'/审'+F.AE+')'
+  +' C'+D.C+'(勤'+F.IN+'/秩'+F.OR+')'
+  +' E'+D.E+'(热'+F.EN+'/果'+F.AS+')'
+  +' A'+D.A+'(同'+F.CO+'/礼'+F.PO+')'
+  +' N'+D.N+'(退'+F.WI+'/易'+F.VO+')'
+  +' | QC:'+(qcok?'正常':qc.flags.join('/'))+'(用时'+qc.mins+'分/连击'+qc.maxrun+'/偏差'+qc.cid+')';
+  const ta2=document.getElementById('ptext2');ta2.value=back;
+  const showFallback=()=>{document.getElementById('sendfail').style.display='block';document.getElementById('copy2').style.display='block';document.getElementById('send').style.display='none'};
+  document.getElementById('send').addEventListener('click',function(){
+    const btn=this;btn.disabled=true;btn.textContent='回传中…';
+    const qv=i=>(document.getElementById('qa'+i).value||'').trim();
+    const payload={_subject:'BigFive回传: '+nick,version:'v7',name:nick,mbti:mbti||'',
+      O:D.O,C:D.C,E:D.E,A:D.A,N:D.N,
+      facets:'IT'+F.IT+' AE'+F.AE+' IN'+F.IN+' OR'+F.OR+' EN'+F.EN+' AS'+F.AS+' CO'+F.CO+' PO'+F.PO+' WI'+F.WI+' VO'+F.VO,
+      summary:back,
+      qc:(qcok?'ok':qc.flags.join('/'))+' t'+qc.mins+'m run'+qc.maxrun+' dev'+qc.cid,
+      q_background:qv(0),q_flow:qv(1),q_conflict:qv(2),q_workday:qv(3),q_emotion:qv(4)};
+    const to=setTimeout(()=>{btn.disabled=false;btn.textContent='同意并一键回传';showFallback()},12000);
+    fetch('https://formspree.io/f/xoevakkw',{method:'POST',headers:{'Accept':'application/json','Content-Type':'application/json'},body:JSON.stringify(payload)})
+    .then(r=>{clearTimeout(to);if(r.ok){btn.textContent='已回传 ✓ 谢谢参与';btn.classList.add('done');btn.disabled=true}else{btn.disabled=false;btn.textContent='同意并一键回传';showFallback()}})
+    .catch(()=>{clearTimeout(to);btn.disabled=false;btn.textContent='同意并一键回传';showFallback()});
+  });
+  document.getElementById('copy2').addEventListener('click',function(){
+    const btn=this;
+    const done=()=>{btn.textContent='已复制 — 微信粘贴给 Yuchen 即可';btn.classList.add('done')};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(back).then(done).catch(()=>{ta2.style.display='block';ta2.select();done()});
+    }else{ta2.style.display='block';ta2.select();try{document.execCommand('copy');done()}catch(e){}}
+  });
+}
+</script>
+</body>
+</html>
